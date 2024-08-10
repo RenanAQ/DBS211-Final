@@ -2,11 +2,11 @@
 
 -- Patients' Appointments
 
---      This view combines the information referring to the appointments while making
+--      This view combines the information referring to the pending appointments while making
 --      the data easier to read by incorporating the names of the patients and doctors
 --      and sorting the data chronologically.
 
-CREATE VIEW Patient_Appointments
+CREATE VIEW Pending_Appointments
 AS SELECT 
     a.appointmenttime,
     (p.firstname || ' ' || p.lastname) AS PatientName,
@@ -20,9 +20,12 @@ JOIN doctors d
     ON a.doctorid = d.doctorid
 JOIN billing b
     ON a.appointmentid = b.appointmentid
+WHERE b.paymentstatus!='Refunded'
+    AND a.status='Scheduled'
 ORDER BY a.appointmentdate;
 
-SELECT * FROM Patient_Appointments;
+SELECT * FROM Pending_Appointments;
+DESC Pending_Appointments;
 
 -- Unpaid Appointments
 
@@ -46,6 +49,7 @@ WHERE b.paymentstatus='Unpaid'
 ORDER BY b.paymentstatus;
 
 SELECT * FROM Unpaid_Appointments;
+DESC Unpaid_Appointments;
 
 -- Patients Condition Records
 
@@ -70,6 +74,7 @@ JOIN doctors d
 ORDER BY PatientName;
 
 SELECT * FROM Patient_Conditions;
+DESC Patient_Conditions;
 
 -- Doctor's Appointments with Patient Details
 
@@ -92,6 +97,8 @@ JOIN patients p
     ON p.patientid = a.patientid
 JOIN records r
     ON r.patientid = a.patientid
+WHERE a.status='Scheduled'
 ORDER BY DoctorName;
 
 SELECT * FROM Doctor_Appointment_Details;
+DESC Doctor_Appointment_Details;
